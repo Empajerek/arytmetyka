@@ -14,12 +14,12 @@ int main() {
   printf("1=%d\n", in_wartosc(razy(zero, wartosc_od_do(1., 10.)), 0));
   
   wartosc malo = wartosc_od_do(0., 1.);
-  
+
   printf("1=%d\n", in_wartosc(razy(zero, malo), 0));
   
   wartosc duzo = podzielic(jeden, malo);
   printf("inf=%lf\n", sr_wartosc(duzo));
-  
+
   printf("1=%d\n", in_wartosc(razy(zero, duzo), 0));
   
   return 0;

@@ -11,6 +11,26 @@ typedef struct wartosc {
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 #define ISZERO(x) ( fabs(x) < (2e-10) ? (true) : (false))
 
+/*
+
+                   .     _,
+                   |`\__/ /
+                   \  . .(
+                    | __T|
+                   /   |
+      _.---======='    |
+     //               {}
+    `|      ,   ,     {}
+     \      /___;    ,'s
+      ) ,-;`    `\  //
+     | / (        ;||
+     ||`\\        |||
+     ||  \\       |||
+jgs  )\   )\      )||
+     `"   `"      `""
+
+*/
+
 wartosc wartosc_dokladnosc(double x, double p){
   wartosc w = {x - p, x + p};
   return w;
@@ -56,23 +76,47 @@ wartosc minus(wartosc a, wartosc b){
 
 wartosc razy(wartosc a, wartosc b){
   wartosc w;
-  w.min = MIN(MIN(a.min*b.min, a.min*b.max), MIN(a.max*b.min, a.min*b.max));
-  w.max = MAX(MAX(a.min*b.min, a.min*b.max), MAX(a.max*b.min, a.min*b.max));
+
+  w.min = (ISZERO(a.min) || ISZERO(b.min)) ? 0 : 
+    MIN(MIN(a.min*b.min, a.min*b.max), MIN(a.max*b.min, a.min*b.max));
+
+  w.max = (ISZERO(a.max) || ISZERO(b.max)) ? 0 : 
+    MAX(MAX(a.min*b.min, a.min*b.max), MAX(a.max*b.min, a.min*b.max));
+
   return w;
 };
 
+/*
+
+   \\
+   (o>
+\\_//)
+ \_/_)
+  _|_
+
+*/
+
 wartosc podzielic(wartosc a, wartosc b){
     wartosc w;
-git
-    w.min = MIN(MIN(a.min/b.min, a.min/b.max), MIN(a.max/b.min, a.min/b.max));
-    w.max = MAX(MAX(a.min/b.min, a.min/b.max), MAX(a.max/b.min, a.min/b.max));
 
-    if(in_wartosc(b, 0)){
-        if(a.max > 0)
-            w.max = HUGE_VAL;
-        if(a.min < 0)
-            w.min = -HUGE_VAL;
+    if(in_wartosc(b,0)){
+      if(ISZERO(b.min)){
+
+        w.min = (a.min > 0) ? a.min / b.max : -HUGE_VAL;
+        w.max = (a.max < 0) ? a.max / b.max : HUGE_VAL;
+
+      } else if(ISZERO(b.max)){
+
+        w.min = (a.max < 0) ? a.max / b.min : -HUGE_VAL;
+        w.max = (a.min > 0) ? a.min / b.min : HUGE_VAL;
+
+      } else {
+        w.min = -HUGE_VAL;
+        w.max = HUGE_VAL;
+      }
+    } else {
+      w.min = MIN(MIN(a.min/b.min, a.min/b.max), MIN(a.max/b.min, a.min/b.max));
+      w.max = MAX(MAX(a.min/b.min, a.min/b.max), MAX(a.max/b.min, a.min/b.max));
     }
-
     return w;
 };
